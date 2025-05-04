@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Отчеты | Айболит</title>
+  <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+  <h1>Отчеты</h1>
+  <div class="container">
+    <select id="reportType">
+      <option value="visits">Посещаемость</option>
+      <option value="revenue">Выручка</option>
+    </select>
+    <div class="button-group">
+      <button onclick="generateReport()">Сформировать отчет</button>
+    </div>
+  </div>
+  <table id="reportTable">
+    <thead id="tableHead"></thead>
+    <tbody id="tableBody"></tbody>
+  </table>
+  <div class="container">
+    <div class="button-group">
+      <button onclick="alert('Экспорт в PDF (имитация)')">Экспорт в PDF</button>
+      <button onclick="alert('Экспорт в Excel (имитация)')">Экспорт в Excel</button>
+    </div>
+  </div>
+  <script src="../js/reports.js"></script>
+</body>
+</html>

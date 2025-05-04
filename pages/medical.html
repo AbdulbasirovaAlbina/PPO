@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Медицинские карты | Айболит</title>
+  <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+  <h1>Медицинские карты</h1>
+  <form id="medicalForm">
+    <input type="text" id="petName" placeholder="Кличка питомца" required>
+    <input type="text" id="diagnosis" placeholder="Диагноз" required>
+    <div class="button-group">
+      <button type="submit">Добавить запись</button>
+    </div>
+  </form>
+  <table id="medicalTable">
+    <thead>
+      <tr>
+        <th>Кличка</th>
+        <th>Диагноз</th>
+      </tr>
+    </thead>
+    <tbody id="medicalTableBody"></tbody>
+  </table>
+  <div class="container">
+    <div class="button-group">
+      <button onclick="alert('Экспорт в PDF (имитация)')">Экспорт в PDF</button>
+    </div>
+  </div>
+  <script src="../js/medical.js"></script>
+</body>
+</html>

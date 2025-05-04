@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Учет услуг | Айболит</title>
+  <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+  <h1>Учет услуг</h1>
+  <form id="serviceForm">
+    <select id="service" required>
+      <option value="">Выберите услугу</option>
+      <option value="Диагностика">Диагностика (500 руб)</option>
+      <option value="Вакцинация">Вакцинация (1000 руб)</option>
+      <option value="Лечение">Лечение (1500 руб)</option>
+    </select>
+    <div class="button-group">
+      <button type="submit">Добавить в счет</button>
+    </div>
+  </form>
+  <p id="total">Итого: 0 руб</p>
+  <script src="../js/services.js"></script>
+</body>
+</html>

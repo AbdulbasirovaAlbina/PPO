@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Онлайн-запись | Айболит</title>
+  <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+  <h1>Онлайн-запись на прием</h1>
+  <form id="appointmentForm">
+    <input type="date" id="date" required>
+    <input type="time" id="time" required>
+    <select id="vet" required>
+      <option value="">Выберите врача</option>
+      <option value="1">Иванов И.И.</option>
+      <option value="2">Петров П.П.</option>
+    </select>
+    <div class="button-group">
+      <button type="submit">Записаться</button>
+    </div>
+  </form>
+  <script src="../js/appointment.js"></script>
+</body>
+</html>
