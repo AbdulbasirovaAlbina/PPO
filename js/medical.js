@@ -7,7 +7,7 @@ const loadRecords = () => {
   tableBody.innerHTML = '';
   records.forEach((record) => {
     const row = document.createElement('tr');
-    row.innerHTML = `<td>${record.petName}</td><td>${record.diagnosis}</td>`;
+    row.innerHTML = `<td>${record.petName}</td><td>${record.diagnosis}</td><td>${record.treatment}</td>`;
     tableBody.appendChild(row);
   });
 };
@@ -18,17 +18,18 @@ form.addEventListener('submit', (e) => {
   
   const petName = document.getElementById('petName').value;
   const diagnosis = document.getElementById('diagnosis').value;
+  const treatment = document.getElementById('treatment').value;
 
-  if (!petName || !diagnosis) {
+  if (!petName || !diagnosis || !treatment) {
     alert('Пожалуйста, заполните все поля!');
     return;
   }
 
   const records = JSON.parse(localStorage.getItem('medicalRecords') || '[]');
-  records.push({ petName, diagnosis });
+  records.push({ petName, diagnosis, treatment });
   localStorage.setItem('medicalRecords', JSON.stringify(records));
 
-  alert(`Добавлена запись: ${petName}, ${diagnosis}`);
+  alert(`Добавлена запись: ${petName}, ${diagnosis}, ${treatment}`);
   form.reset();
   loadRecords();
 });

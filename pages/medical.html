@@ -7,28 +7,255 @@
   <link rel="stylesheet" href="../css/styles.css">
 </head>
 <body>
-  <h1>Медицинские карты</h1>
+  <h1>АМБУЛАТОРНАЯ КАРТА №</h1>
   <form id="medicalForm">
-    <input type="text" id="petName" placeholder="Кличка питомца" required>
-    <input type="text" id="diagnosis" placeholder="Диагноз" required>
+    <div class="card-header">
+      <p>Выберите питомца</p>
+      <select id="petSelect" onchange="fillPetDetails()">
+        <option value="">-- Выберите питомца --</option>
+      </select>
+      <p>Выдан <input type="text" id="petOwner" placeholder="Ф.И.О. владельца" pattern="[А-Яа-яЁё\s\-]+" title="Только буквы и пробелы" required></p>
+      <p>адрес <input type="text" id="ownerAddress" placeholder="Адрес владельца"></p>
+      <p>телефон <input type="tel" id="ownerPhone" placeholder="Телефон владельца" pattern="\+?\d+" title="Только цифры, может начинаться с +"></p>
+      <p>Животное вида <input type="text" id="petSpecies" placeholder="Вид животного">
+        дата рождения <input type="text" id="petBirthDate" placeholder="ДД.ММ.ГГГГ" pattern="\d{2}\.\d{2}\.\d{4}" title="Формат: ДД.ММ.ГГГГ"></p>
+      <p>кличка <input type="text" id="petName" placeholder="Кличка питомца" pattern="[А-Яа-яЁё\s\-]+" title="Только буквы и пробелы" required>
+        пол <input type="text" id="petGender" placeholder="Пол животного">
+        окрас <input type="text" id="petColor" placeholder="Окрас животного"></p>
+    </div>
+    <div class="card-section">
+      <p>Дата <input type="text" id="visitDate" placeholder="ДД.ММ.ГГГГ" pattern="\d{2}\.\d{2}\.\d{4}" title="Формат: ДД.ММ.ГГГГ">
+              Температура T- <input type="text" id="temperature" placeholder="например, 36.9°C" pattern="\d{2}([.,]\d)?" title="Например: 36.9"></p>
+      <textarea id="diagnosis" placeholder="Диагноз" required></textarea>
+      <p>Назначение лечения</p>
+      <textarea id="treatment" placeholder="Назначение лечения" required></textarea>
+    </div>
     <div class="button-group">
       <button type="submit">Добавить запись</button>
     </div>
   </form>
-  <table id="medicalTable">
-    <thead>
-      <tr>
-        <th>Кличка</th>
-        <th>Диагноз</th>
-      </tr>
-    </thead>
-    <tbody id="medicalTableBody"></tbody>
-  </table>
+
+  <div class="card-container" id="medicalRecords">
+    </div>
+
   <div class="container">
     <div class="button-group">
-      <button onclick="alert('Экспорт в PDF (имитация)')">Экспорт в PDF</button>
+      <button onclick="alert('Экспорт в PDF')">Экспорт в PDF</button>
     </div>
   </div>
-  <script src="../js/medical.js"></script>
+
+  <script>
+    const recordsContainer = document.getElementById('medicalRecords');
+    const form = document.getElementById('medicalForm');
+    const petSelect = document.getElementById('petSelect');
+    const petNameInput = document.getElementById('petName');
+    const petOwnerInput = document.getElementById('petOwner');
+    const ownerAddressInput = document.getElementById('ownerAddress');
+    const ownerPhoneInput = document.getElementById('ownerPhone');
+    const petSpeciesInput = document.getElementById('petSpecies');
+    const petBirthDateInput = document.getElementById('petBirthDate');
+    const petGenderInput = document.getElementById('petGender');
+    const petColorInput = document.getElementById('petColor');
+
+    const loadRecords = () => {
+      const records = JSON.parse(localStorage.getItem('medicalRecords') || '[]');
+      const uniquePets = [];
+      const seen = new Set();
+
+      records.forEach(record => {
+        const identifier = `${record.petName}|${record.petOwner || 'Не указано'}|${record.petBirthDate || 'Не указано'}`;
+        if (!seen.has(identifier)) {
+          seen.add(identifier);
+          uniquePets.push(record);
+        }
+      });
+
+      petSelect.innerHTML = '<option value="">-- Выберите питомца --</option>';
+      uniquePets.forEach((record, index) => {
+        const identifier = `${index}`;
+        const displayText = `Кличка: ${record.petName}, Владелец: ${record.petOwner || 'Не указано'}, Дата рождения: ${record.petBirthDate || 'Не указано'}`;
+        const option = document.createElement('option');
+        option.value = identifier;
+        option.textContent = displayText;
+        petSelect.appendChild(option);
+      });
+
+      recordsContainer.innerHTML = '';
+      const groupedRecords = {};
+      records.forEach(record => {
+        const identifier = `${record.petName}|${record.petOwner || 'Не указано'}|${record.petBirthDate || 'Не указано'}`;
+        if (!groupedRecords[identifier]) {
+          groupedRecords[identifier] = [];
+        }
+        groupedRecords[identifier].push(record);
+      });
+
+      const identifiers = Object.keys(groupedRecords);
+      identifiers.forEach((identifier, idx) => {
+        if (idx > 0) {
+          const separator = document.createElement('div');
+          separator.className = 'patient-separator';
+          recordsContainer.appendChild(separator);
+        }
+
+        const groupDiv = document.createElement('div');
+        groupDiv.className = 'record-group';
+        const [petName, petOwner, petBirthDate] = identifier.split('|');
+        let groupContent = `
+          <div class="record-header">
+            <p>Выдан: ${petOwner}</p>
+            <p>адрес: ${groupedRecords[identifier][0].ownerAddress || ''}</p>
+            <p>телефон: ${groupedRecords[identifier][0].ownerPhone || ''}</p>
+            <p>Животное вида: ${groupedRecords[identifier][0].petSpecies || ''} дата рождения: ${petBirthDate}</p>
+            <p>кличка: ${petName} пол: ${groupedRecords[identifier][0].petGender || ''} окрас: ${groupedRecords[identifier][0].petColor || ''}</p>
+          </div>
+          <div class="record-details">
+            <p>Дата</p>
+            <ol>
+        `;
+
+        groupedRecords[identifier].forEach((record, index) => {
+          const globalIndex = records.indexOf(record);
+          const displayDate = record.visitDate || 'Не указано';
+          const displayTemp = record.temperature || 'Не указано';
+          groupContent += `
+            <li>
+              ${displayDate}, T-${displayTemp}<br>
+              ${record.diagnosis}<br>
+              <strong>Назначение лечения</strong><br>
+              ${record.treatment}
+              <div class="button-group">
+                <button class="delete-btn" onclick="deleteRecord(${globalIndex})">Удалить</button>
+              </div>
+            </li>
+          `;
+        });
+
+        groupContent += `</ol></div>`;
+        groupDiv.innerHTML = groupContent;
+        recordsContainer.appendChild(groupDiv);
+      });
+    };
+
+    window.fillPetDetails = () => {
+      const selectedIndex = petSelect.value;
+      const records = JSON.parse(localStorage.getItem('medicalRecords') || '[]');
+      const uniquePets = [];
+      const seen = new Set();
+
+      records.forEach(record => {
+        const identifier = `${record.petName}|${record.petOwner || 'Не указано'}|${record.petBirthDate || 'Не указано'}`;
+        if (!seen.has(identifier)) {
+          seen.add(identifier);
+          uniquePets.push(record);
+        }
+      });
+
+      const petRecord = selectedIndex ? uniquePets[selectedIndex] : null;
+
+      if (petRecord) {
+        petNameInput.value = petRecord.petName;
+        petOwnerInput.value = petRecord.petOwner || '';
+        ownerAddressInput.value = petRecord.ownerAddress || '';
+        ownerPhoneInput.value = petRecord.ownerPhone || '';
+        petSpeciesInput.value = petRecord.petSpecies || '';
+        petBirthDateInput.value = petRecord.petBirthDate || '';
+        petGenderInput.value = petRecord.petGender || '';
+        petColorInput.value = petRecord.petColor || '';
+      } else {
+        petNameInput.value = '';
+        petOwnerInput.value = '';
+        ownerAddressInput.value = '';
+        ownerPhoneInput.value = '';
+        petSpeciesInput.value = '';
+        petBirthDateInput.value = '';
+        petGenderInput.value = '';
+        petColorInput.value = '';
+      }
+    };
+
+    window.deleteRecord = (index) => {
+      const records = JSON.parse(localStorage.getItem('medicalRecords') || '[]');
+      records.splice(index, 1);
+      localStorage.setItem('medicalRecords', JSON.stringify(records));
+      loadRecords();
+    };
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      const petOwner = petOwnerInput.value.trim();
+      const ownerAddress = ownerAddressInput.value.trim();
+      const ownerPhone = ownerPhoneInput.value.trim();
+      const petSpecies = petSpeciesInput.value.trim();
+      const petBirthDate = petBirthDateInput.value.trim();
+      const petName = petNameInput.value.trim();
+      const petGender = petGenderInput.value.trim();
+      const petColor = petColorInput.value.trim();
+      const visitDate = document.getElementById('visitDate').value.trim();
+      const temperature = document.getElementById('temperature').value.trim();
+      const diagnosis = document.getElementById('diagnosis').value.trim();
+      const treatment = document.getElementById('treatment').value.trim();
+
+      // JS-проверки
+      const nameRegex = /^[А-Яа-яЁё\s\-]+$/;
+      const phoneRegex = /^\+?\d+$/;
+      const dateRegex = /^\d{2}\.\d{2}\.\d{4}$/;
+      const tempRegex = /^\d{2}([.,]\d)?$/;
+
+      if (!nameRegex.test(petOwner)) {
+        alert('Поле "Ф.И.О. владельца" должно содержать только буквы и пробелы.');
+        return;
+      }
+      if (!nameRegex.test(petName)) {
+        alert('Поле "Кличка питомца" должно содержать только буквы.');
+        return;
+      }
+      if (ownerPhone && !phoneRegex.test(ownerPhone)) {
+        alert('Телефон должен содержать только цифры и может начинаться с +.');
+        return;
+      }
+      if (petBirthDate && !dateRegex.test(petBirthDate)) {
+        alert('Дата рождения должна быть в формате ДД.ММ.ГГГГ.');
+        return;
+      }
+      if (visitDate && !dateRegex.test(visitDate)) {
+        alert('Дата посещения должна быть в формате ДД.ММ.ГГГГ.');
+        return;
+      }
+      if (temperature && !tempRegex.test(temperature)) {
+        alert('Температура должна быть числом, например: 36.9');
+        return;
+      }
+
+      if (!petName || !diagnosis || !treatment) {
+        alert('Пожалуйста, заполните обязательные поля: кличка питомца, диагноз и назначение лечения!');
+        return;
+      }
+
+      const records = JSON.parse(localStorage.getItem('medicalRecords') || '[]');
+      records.push({
+        petOwner,
+        ownerAddress,
+        ownerPhone,
+        petSpecies,
+        petBirthDate,
+        petName,
+        petGender,
+        petColor,
+        visitDate,
+        temperature,
+        diagnosis,
+        treatment
+      });
+      localStorage.setItem('medicalRecords', JSON.stringify(records));
+
+      alert(`Добавлена запись: ${petName}, Диагноз: ${diagnosis}, Лечение: ${treatment}`);
+      form.reset();
+      loadRecords();
+    });
+
+    loadRecords();
+  </script>
 </body>
 </html>
