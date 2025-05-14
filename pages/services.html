@@ -10,28 +10,28 @@
 <body>
 
     <div class="container">
+        <div id="print-content">
+            <h1>Чек</h1>
+            <table class="header-table">
+                <tr><td>ООО "Ветеринарная клиника 'Айболит'"</td></tr>
+                <tr><td>г. Уфа, ул. Лесной проезд, д. 12</td></tr>
+                <tr><td>ИНН 0275123456, КПП 027501001, БИК 048073601</td></tr>
+                <tr><td>Тел.: 8 (347) 292-85-47</td></tr>
+                <tr><td>Утверждена в соответствии с приказом Минсельхоза РФ от 15 июля 2015 г. №234н</td></tr>
+                <tr><td>Код по ОКУД: 0790000</td></tr>
+                <tr><td>ОКПО: 43125678</td></tr>
+            </table>
 
-        <h1>Чек</h1>
+            <table id="serviceTable">
+                <tr><th>Наименование</th><th>Кол-во</th><th>Цена</th><th>Итог</th></tr>
+            </table>
 
-        <table class="header-table">
-            <tr><td>ООО "Ветеринарная клиника 'Айболит'"</td></tr>
-            <tr><td>г. Уфа, ул. Лесной проезд, д. 12</td></tr>
-            <tr><td>ИНН 0275123456, КПП 027501001, БИК 048073601</td></tr>
-            <tr><td>Тел.: 8 (347) 292-85-47</td></tr>
-            <tr><td>Утверждена в соответствии с приказом Минсельхоза РФ от 15 июля 2015 г. №234н</td></tr>
-            <tr><td>Код по ОКУД: 0790000</td></tr>
-            <tr><td>ОКПО: 43125678</td></tr>
-        </table>
+            <p id="total">Итого: 0 руб</p>
 
-        <table id="serviceTable">
-            <tr><th>Наименование</th><th>Кол-во</th><th>Цена</th><th>Итог</th></tr>
-        </table>
-
-        <p id="total">Итого: 0 руб</p>
-
-        <div class="signature-block">
-            <p>Получено лицом, ответственным за совершение операции и правильность её оформления</p>
-            <p>М.П. _____________ (подпись) </p>
+            <div class="signature-block">
+                <p>Получено лицом, ответственным за совершение операции и правильность её оформления</p>
+                <p>М.П. _____________ (подпись) </p>
+            </div>
         </div>
 
         <form id="serviceForm">
@@ -56,7 +56,7 @@
             <div class="button-group">
                 <button type="submit">Добавить в чек</button>
                 <button type="button" onclick="clearReceipt()">Очистить чек</button>
-                <button type="button" onclick="window.print()">Распечатать</button>
+                <button type="button" onclick="printReceipt()">Распечатать</button>
             </div>
         </form>
     </div>
@@ -142,9 +142,16 @@
             updateReceipt();
         };
 
+        window.printReceipt = () => {
+            const printContent = document.getElementById('print-content').innerHTML;
+            const originalContent = document.body.innerHTML;
+            document.body.innerHTML = printContent;
+            window.print();
+            document.body.innerHTML = originalContent;
+        };
+
         updateReceipt();
     </script>
 
 </body>
-
 </html>
