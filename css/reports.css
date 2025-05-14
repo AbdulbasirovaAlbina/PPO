@@ -1,0 +1,105 @@
+#reportForm {
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+#reportForm select {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-sizing: border-box;
+  margin-bottom: 10px;
+  font-size: 16px;
+}
+
+#reportTable {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  display: table;
+  visibility: visible;
+}
+
+#reportTable th, #reportTable td {
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: center;
+  background-color: #f9f9f9;
+}
+
+#reportTable th {
+  background-color: #3498db;
+  color: white;
+  font-weight: bold;
+}
+
+#reportTable td {
+  color: #333;
+}
+
+h1 {
+  text-align: center;
+  margin-top: 20px;
+  color: #333;
+}
+
+.button-group button {
+  background-color: #3498db;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin: 5px;
+  font-size: 16px;
+}
+
+.button-group button:hover {
+  background-color: #2980b9;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+  #reportForm {
+    padding: 15px;
+  }
+
+  #reportTable {
+    font-size: 14px;
+  }
+
+  #reportTable th, #reportTable td {
+    padding: 6px;
+  }
+
+  .button-group button {
+    padding: 8px 15px;
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  #reportTable {
+    display: block;
+    overflow-x: auto;
+  }
+
+  #reportForm select {
+    font-size: 14px;
+  }
+
+  .button-group button {
+    width: 100%;
+    margin: 5px 0;
+  }
+}

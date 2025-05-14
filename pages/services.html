@@ -3,155 +3,62 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Чек | Айболит</title>
+  <title>Учет услуг | Айболит</title>
   <link rel="stylesheet" href="../css/styles.css">
 </head>
-
 <body>
+  <div class="container">
+    <div id="print-content">
+      <h1>Чек</h1>
+      <table class="header-table">
+        <tr><td>ООО "Ветеринарная клиника 'Айболит'"</td></tr>
+        <tr><td>г. Уфа, ул. Лесной проезд, д. 12</td></tr>
+        <tr><td>ИНН 0275123456, КПП 027501001, БИК 048073601</td></tr>
+        <tr><td>Тел.: 8 (347) 292-85-47</td></tr>
+        <tr><td>Утверждена в соответствии с приказом Минсельхоза РФ от 15 июля 2015 г. №234н</td></tr>
+        <tr><td>Код по ОКУД: 0790000</td></tr>
+        <tr><td>ОКПО: 43125678</td></tr>
+      </table>
 
-    <div class="container">
-        <div id="print-content">
-            <h1>Чек</h1>
-            <table class="header-table">
-                <tr><td>ООО "Ветеринарная клиника 'Айболит'"</td></tr>
-                <tr><td>г. Уфа, ул. Лесной проезд, д. 12</td></tr>
-                <tr><td>ИНН 0275123456, КПП 027501001, БИК 048073601</td></tr>
-                <tr><td>Тел.: 8 (347) 292-85-47</td></tr>
-                <tr><td>Утверждена в соответствии с приказом Минсельхоза РФ от 15 июля 2015 г. №234н</td></tr>
-                <tr><td>Код по ОКУД: 0790000</td></tr>
-                <tr><td>ОКПО: 43125678</td></tr>
-            </table>
+      <table id="serviceTable">
+        <tr><th>Наименование</th><th>Кол-во</th><th>Цена</th><th>Итог</th></tr>
+      </table>
 
-            <table id="serviceTable">
-                <tr><th>Наименование</th><th>Кол-во</th><th>Цена</th><th>Итог</th></tr>
-            </table>
+      <p id="total">Итого: 0 руб</p>
 
-            <p id="total">Итого: 0 руб</p>
-
-            <div class="signature-block">
-                <p>Получено лицом, ответственным за совершение операции и правильность её оформления</p>
-                <p>М.П. _____________ (подпись) </p>
-            </div>
-        </div>
-
-        <form id="serviceForm">
-            <select id="service" required>
-                <option value="">Выберите услугу</option>
-                <option value="Вакцинация">Вакцинация (1000 руб)</option>
-                <option value="УЗИ">УЗИ (1500 руб)</option>
-                <option value="Анализы">Анализы (от 800 руб)</option>
-                <option value="Чистка зубов">Чистка зубов (1500 руб)</option>
-                <option value="Консультация">Консультация ветеринара (1200 руб)</option>
-            </select>
-
-            <div id="analysis-selection">
-                <select id="analysis-type">
-                    <option value="">Выберите тип анализа</option>
-                    <option value="Общий анализ крови">Общий анализ крови (800 руб)</option>
-                    <option value="Биохимический анализ крови">Биохимический анализ крови (1500 руб)</option>
-                    <option value="Анализ мочи">Анализ мочи (500 руб)</option>
-                </select>
-            </div>
-
-            <div class="button-group">
-                <button type="submit">Добавить в чек</button>
-                <button type="button" onclick="clearReceipt()">Очистить чек</button>
-                <button type="button" onclick="printReceipt()">Распечатать</button>
-            </div>
-        </form>
+      <div class="signature-block">
+        <p>Получено лицом, ответственным за совершение операции и правильность её оформления</p>
+        <p>М.П. _____________ (подпись)</p>
+      </div>
     </div>
 
-    <script>
-        const serviceForm = document.getElementById('serviceForm');
-        const serviceTable = document.getElementById('serviceTable');
-        const totalElement = document.getElementById('total');
-        let services = JSON.parse(localStorage.getItem('services') || '[]');
-        let total = services.reduce((sum, service) => sum + service.total, 0);
+    <form id="serviceForm">
+      <select id="service" required>
+        <option value="">Выберите услугу</option>
+        <option value="Вакцинация">Вакцинация (1000 руб)</option>
+        <option value="УЗИ">УЗИ (1500 руб)</option>
+        <option value="Анализы">Анализы (от 800 руб)</option>
+        <option value="Чистка зубов">Чистка зубов (1500 руб)</option>
+        <option value="Консультация">Консультация ветеринара (1200 руб)</option>
+      </select>
 
-        const servicePrices = {
-            'Вакцинация': 1000,
-            'УЗИ': 1500,
-            'Анализы': 800,
-            'Чистка зубов': 1500,
-            'Консультация': 1200
-        };
+      <div id="analysis-selection">
+        <select id="analysis-type">
+          <option value="">Выберите тип анализа</option>
+          <option value="Общий анализ крови">Общий анализ крови (800 руб)</option>
+          <option value="Биохимический анализ крови">Биохимический анализ крови (1500 руб)</option>
+          <option value="Анализ мочи">Анализ мочи (500 руб)</option>
+        </select>
+      </div>
 
-        const analysisPrices = {
-            'Общий анализ крови': 800,
-            'Биохимический анализ крови': 1500,
-            'Анализ мочи': 500
-        };
+      <div class="button-group">
+        <button type="submit">Добавить в чек</button>
+        <button type="button" onclick="clearReceipt()">Очистить чек</button>
+        <button type="button" onclick="printReceipt()">Распечатать</button>
+      </div>
+    </form>
+  </div>
 
-        const serviceSelect = document.getElementById('service');
-        const analysisSelection = document.getElementById('analysis-selection');
-        const analysisTypeSelect = document.getElementById('analysis-type');
-
-        serviceSelect.addEventListener('change', () => {
-            if (serviceSelect.value === 'Анализы') {
-                analysisSelection.style.display = 'block';
-            } else {
-                analysisSelection.style.display = 'none';
-            }
-        });
-
-        const updateReceipt = () => {
-            serviceTable.innerHTML = '<tr><th>Наименование</th><th>Кол-во</th><th>Цена</th><th>Итог</th></tr>';
-            services.forEach(service => {
-                const row = document.createElement('tr');
-                row.innerHTML = `<td>${service.name}</td><td>1</td><td>${service.price} руб</td><td>${service.total} руб</td>`;
-                serviceTable.appendChild(row);
-            });
-
-            totalElement.textContent = `Итого: ${total} руб`;
-            localStorage.setItem('services', JSON.stringify(services));
-
-            const signatureBlock = document.querySelector('.signature-block');
-            const today = new Date().toLocaleDateString('ru-RU');
-            signatureBlock.innerHTML = `<p>Получено лицом, ответственным за совершение операции и правильность её оформления</p>
-                                        <p>М.П. _____________ (подпись) ${today} </p>`;
-        };
-
-        serviceForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const serviceName = serviceSelect.value;
-            let servicePrice = servicePrices[serviceName];
-            let serviceTotal = servicePrice;
-
-            if (serviceName === 'Анализы') {
-                const analysisType = analysisTypeSelect.value;
-                if (!analysisType) {
-                    alert('Пожалуйста, выберите тип анализа.');
-                    return;
-                }
-                servicePrice = analysisPrices[analysisType];
-                serviceTotal = servicePrice;
-                services.push({ name: analysisType, price: servicePrice, total: serviceTotal });
-            } else {
-                services.push({ name: serviceName, price: servicePrice, total: serviceTotal });
-            }
-
-            total += serviceTotal;
-            updateReceipt();
-            serviceForm.reset();
-        });
-
-        window.clearReceipt = () => {
-            services = [];
-            total = 0;
-            localStorage.removeItem('services');
-            updateReceipt();
-        };
-
-        window.printReceipt = () => {
-            const printContent = document.getElementById('print-content').innerHTML;
-            const originalContent = document.body.innerHTML;
-            document.body.innerHTML = printContent;
-            window.print();
-            document.body.innerHTML = originalContent;
-        };
-
-        updateReceipt();
-    </script>
-
+  <script src="../js/services.js"></script>
 </body>
 </html>

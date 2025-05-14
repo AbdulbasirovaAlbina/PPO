@@ -1,0 +1,115 @@
+/* Стили для страницы Онлайн-запись */
+#appointmentForm {
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+#appointmentForm select,
+#appointmentForm input[type="text"] {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-sizing: border-box;
+  margin-bottom: 10px;
+  font-size: 16px;
+}
+
+#calendarTable, #appointmentTable {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+#calendarTable th, #calendarTable td,
+#appointmentTable th, #appointmentTable td {
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: center;
+}
+
+#calendarTable th, #appointmentTable th {
+  background-color: #3498db;
+  color: white;
+  font-weight: bold;
+}
+
+#calendarTable td {
+  color: #333;
+}
+
+#calendarTable td.free {
+  color: green;
+  cursor: pointer;
+}
+
+#calendarTable td.taken {
+  color: red;
+}
+
+#calendarTable td:hover.free {
+  background-color: #e0f7fa;
+}
+
+#appointmentTable button {
+  background-color: #3498db;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin: 0 5px;
+  font-size: 14px;
+}
+
+#appointmentTable button:hover {
+  background-color: #2980b9;
+}
+
+h2 {
+  text-align: center;
+  margin-top: 20px;
+  color: #333;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+  #appointmentForm {
+    padding: 15px;
+  }
+
+  #calendarTable, #appointmentTable {
+    font-size: 14px;
+  }
+
+  #calendarTable th, #calendarTable td,
+  #appointmentTable th, #appointmentTable td {
+    padding: 6px;
+  }
+
+  #appointmentTable button {
+    padding: 5px 8px;
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  #calendarTable, #appointmentTable {
+    display: block;
+    overflow-x: auto;
+  }
+
+  #appointmentForm select,
+  #appointmentForm input[type="text"] {
+    font-size: 14px;
+  }
+}

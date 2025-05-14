@@ -5,28 +5,42 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Отчеты | Айболит</title>
   <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/reports.css">
 </head>
 <body>
   <h1>Отчеты</h1>
   <div class="container">
-    <select id="reportType">
-      <option value="visits">Посещаемость</option>
-      <option value="revenue">Выручка</option>
-    </select>
-    <div class="button-group">
-      <button onclick="generateReport()">Сформировать отчет</button>
-    </div>
+    <form id="reportForm">
+      <select id="reportType" required>
+        <option value="">Выберите тип отчета</option>
+        <option value="visits">Посещаемость</option>
+        <option value="revenue">Выручка</option>
+      </select>
+      <select id="period" required>
+        <option value="">Выберите период</option>
+        <option value="day">День</option>
+        <option value="week">Неделя</option>
+        <option value="month">Месяц</option>
+      </select>
+      <select id="filter" required>
+        <option value="">Выберите фильтр</option>
+      </select>
+      <div class="button-group">
+        <button type="submit">Сформировать отчет</button>
+      </div>
+    </form>
   </div>
-  <table id="reportTable">
-    <thead id="tableHead"></thead>
-    <tbody id="tableBody"></tbody>
-  </table>
   <div class="container">
+    <table id="reportTable">
+      <thead id="tableHead"></thead>
+      <tbody id="tableBody"></tbody>
+    </table>
     <div class="button-group">
-      <button onclick="alert('Экспорт в PDF (имитация)')">Экспорт в PDF</button>
-      <button onclick="alert('Экспорт в Excel (имитация)')">Экспорт в Excel</button>
+      <button onclick="exportToPDF()">Экспорт в PDF</button>
+      <button onclick="exportToExcel()">Экспорт в Excel</button>
     </div>
   </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <script src="../js/reports.js"></script>
 </body>
 </html>

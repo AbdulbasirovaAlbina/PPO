@@ -1,0 +1,236 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 20px;
+  background-color: #f4f4f4;
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+form {
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+}
+
+form p {
+  margin-bottom: 10px;
+}
+
+form input[type="text"],
+form input[type="tel"],
+form textarea,
+form select {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-sizing: border-box;
+  margin-bottom: 10px;
+}
+
+form textarea {
+  resize: vertical;
+  height: 80px;
+}
+
+form button {
+  background-color: #3498db;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+form button:hover {
+  background-color: #2980b9;
+}
+
+.card-container {
+  display: none;
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.record-group {
+  margin-bottom: 20px;
+  padding: 15px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  flex-direction: column;
+}
+
+.record-header {
+  margin-bottom: 10px;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 10px;
+  text-align: left;
+}
+
+.record-details {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  align-items: stretch;
+}
+
+.record-details-left {
+  flex: 1;
+  min-width: 250px;
+  margin-right: 20px;
+  text-align: left;
+}
+
+.record-details-right {
+  flex: 2;
+  overflow-y: auto;
+  max-height: 300px;
+  padding-left: 10px;
+  border-left: 1px solid #ddd;
+  min-width: 250px;
+}
+
+.record-details-right ol {
+  padding-left: 20px;
+  list-style-position: inside;
+}
+
+.record-details-right li {
+  margin-bottom: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+.button-group {
+  margin-top: 10px;
+  display: flex;
+  gap: 10px;
+}
+
+.delete-btn {
+  background-color: #3498db;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.delete-btn:hover {
+  background-color: #2980b9;
+}
+
+.patient-separator {
+  border-top: 2px solid #000;
+  margin: 20px 0;
+}
+
+#searchOwner,
+#searchPetName {
+  margin-bottom: 10px;
+  padding: 6px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: 200px;
+  font-size: 14px;
+}
+
+.autocomplete {
+  position: relative;
+  display: inline-block;
+}
+
+.autocomplete-list {
+  position: absolute;
+  border: 1px solid #d4d4d4;
+  border-bottom: none;
+  border-top: none;
+  z-index: 99;
+  top: 100%;
+  left: 0;
+  right: 0;
+  max-height: 200px;
+  overflow-y: auto;
+  margin-top: 2px;
+  padding-left: 0;
+  list-style: none;
+  background-color: #fff;
+  display: none;
+}
+
+.autocomplete-list li {
+  padding: 8px 10px;
+  cursor: pointer;
+  background-color: #fff;
+  border-bottom: 1px solid #d4d4d4;
+  font-size: 14px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.autocomplete-list li:hover {
+  background-color: #eee;
+}
+
+.autocomplete-list li.active {
+  background-color: DodgerBlue !important;
+  color: #fff;
+}
+
+.search-container {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  align-items: flex-start;
+}
+
+.static-info {
+  flex: 1;
+  margin-right: 20px;
+  min-width: 250px;
+  text-align: left !important;
+}
+
+.visit-history {
+  flex: 2;
+  overflow-y: auto;
+  max-height: 300px;
+  padding-left: 10px;
+  border-left: 1px solid #ddd;
+  min-width: 250px;
+}
+
+#medicalRecords {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .record-details {
+    flex-direction: column;
+  }
+
+  .record-details-left,
+  .record-details-right {
+    width: 100%;
+    border-left: none;
+    padding-left: 0;
+    margin-right: 0;
+  }
+
+  .record-group {
+    flex-direction: column;
+  }
+}
