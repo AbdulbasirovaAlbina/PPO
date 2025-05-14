@@ -250,8 +250,8 @@
     <form id="medicalForm">
         <div class="card-header">
             <p>Выберите питомца</p>
-            <select id="petSelect" onchange="fillPetDetails()"><option value="">-- Выберите питомца --</option><option value="0">Кличка: Барсик, Дата рождения: 15.06.2020</option></select>
-            <p>Выдан <input type="text" id="petOwner" placeholder="Ф.И.О. владельца" pattern="[А-Яа-яЁё\s\-]+" title="Только буквы и пробелы" required=""></p>
+            <select id="petSelect" onchange="fillPetDetails()"><option value="">-- Выберите питомца --</option><option value="0"></option></select>
+            <p>ФИО владельца <input type="text" id="petOwner" placeholder="Ф.И.О. владельца" pattern="[А-Яа-яЁё\s\-]+" title="Только буквы и пробелы" required=""></p>
             <p>адрес <input type="text" id="ownerAddress" placeholder="Адрес владельца"></p>
             <p>телефон <input type="tel" id="ownerPhone" placeholder="Телефон владельца" pattern="\+?\d*" title="Только цифры, может начинаться с +"></p>
             <p>Животное вида <input type="text" id="petSpecies" placeholder="Вид животного">
@@ -286,7 +286,7 @@
     <div class="card-container" id="medicalRecords"><div class="record-group">
         <div class="record-details">
             <div class="static-info">
-                <p><strong>Выдан:</strong> Иванов Пётр Александрович</p>
+                <p><strong>ФИО владельца:</strong> Иванов Пётр Александрович</p>
                 <p><strong>Адрес:</strong> Москва, ул. Ленина, д. 10</p>
                 <p><strong>Телефон:</strong> +70012345678</p>
                 <p><strong>Животное вида:</strong> Кот</p>
@@ -403,7 +403,7 @@
                 const [petName, petOwner, petBirthDate] = identifier.split('|');
                 const staticInfo = `
                     <div class="static-info">
-                        <p><strong>Выдан:</strong> ${petOwner}</p>
+                        <p><strong>ФИО владельца:</strong> ${petOwner}</p>
                         <p><strong>Адрес:</strong> ${groupedRecords[identifier][0].ownerAddress || 'Не указан'}</p>
                         <p><strong>Телефон:</strong> ${groupedRecords[identifier][0].ownerPhone || 'Не указан'}</p>
                         <p><strong>Животное вида:</strong> ${groupedRecords[identifier][0].petSpecies || 'Не указан'}</p>
@@ -691,7 +691,7 @@
                 doc.setFont("helvetica", "normal");
 
                 const staticInfo = [
-                    `Выдан: ${petOwner}`,
+                    `ФИО владельца: ${petOwner}`,
                     `Адрес: ${petData.ownerAddress || 'Не указан'}`,
                     `Телефон: ${petData.ownerPhone || 'Не указан'}`,
                     `Животное вида: ${petData.petSpecies || 'Не указан'}`,
