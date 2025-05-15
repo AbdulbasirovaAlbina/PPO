@@ -1,6 +1,7 @@
 const reportForm = document.getElementById('reportForm');
 const reportTypeSelect = document.getElementById('reportType');
-const periodSelect = document.getElementById('period');
+const startDateInput = document.getElementById('startDate');
+const endDateInput = document.getElementById('endDate');
 const filterSelect = document.getElementById('filter');
 const tableHead = document.getElementById('tableHead');
 const tableBody = document.getElementById('tableBody');
@@ -8,7 +9,7 @@ const tableBody = document.getElementById('tableBody');
 // Примерные данные для тестирования
 const sampleAppointments = [
   { ID_Appointment: 1, Date: '2025-05-01', vet: '1', petName: 'Барсик' },
-  { ID_Appointment: 2, Date: '2025-05-01', vet: '2', petName: 'Мурзик' },
+  { ID_Appointment: 2, Date: '2025-05-01', vet: '1', petName: 'Мурзик' },
   { ID_Appointment: 3, Date: '2025-05-02', vet: '1', petName: 'Рекс' },
   { ID_Appointment: 4, Date: '2025-04-15', vet: '2', petName: 'Шарик' },
   { ID_Appointment: 5, Date: '2025-04-01', vet: '1', petName: 'Тузик' },
@@ -39,6 +40,39 @@ const logError = (message) => {
   console.error(message);
 };
 
+// Форматирование даты в ДД.ММ.ГГГГ
+const formatDate = (value) => {
+  const digits = value.replace(/\D/g, ''); // Удаляем все не-цифры
+  let formatted = '';
+
+  if (digits.length > 0) {
+    formatted = digits.slice(0, 2);
+  }
+  if (digits.length >= 3) {
+    formatted += '.' + digits.slice(2, 4);
+  }
+  if (digits.length >= 5) {
+    formatted += '.' + digits.slice(4, 8);
+  }
+
+  return formatted;
+};
+
+// Обработчики ввода для дат
+[startDateInput, endDateInput].forEach(input => {
+  input.addEventListener('input', (e) => {
+    const cursorPosition = e.target.selectionStart;
+    const oldValue = e.target.value;
+    const formatted = formatDate(e.target.value);
+    e.target.value = formatted;
+
+    // Корректировка позиции курсора
+    const diff = formatted.length - oldValue.length;
+    const newCursorPosition = cursorPosition + diff;
+    e.target.setSelectionRange(newCursorPosition, newCursorPosition);
+  });
+});
+
 // Обновление фильтров
 const updateFilters = () => {
   const reportType = reportTypeSelect.value;
@@ -64,26 +98,20 @@ const updateFilters = () => {
 };
 
 // Получение данных за период
-const getDataForPeriod = (data, period, key) => {
-  const today = new Date('2025-05-14');
-  const startDate = new Date();
-
-  if (period === 'day') {
-    startDate.setDate(today.getDate());
-  } else if (period === 'week') {
-    startDate.setDate(today.getDate() - today.getDay() + 1);
-  } else if (period === 'month') {
-    startDate.setMonth(today.getMonth(), 1);
+const getDataForPeriod = (data, startDateStr, endDateStr, key) => {
+  const dateRegex = /^\d{2}\.\d{2}\.\d{4}$/;
+  if (!dateRegex.test(startDateStr) || !dateRegex.test(endDateStr)) {
+    return [];
   }
 
-  const endDate = new Date(startDate);
-  if (period === 'day') {
-    endDate.setDate(startDate.getDate() + 1);
-  } else if (period === 'week') {
-    endDate.setDate(startDate.getDate() + 7);
-  } else if (period === 'month') {
-    endDate.setMonth(startDate.getMonth() + 1, 1);
-  }
+  // Преобразование строк в формат Date
+  const [startDay, startMonth, startYear] = startDateStr.split('.').map(Number);
+  const [endDay, endMonth, endYear] = endDateStr.split('.').map(Number);
+  const startDate = new Date(startYear, startMonth - 1, startDay);
+  const endDate = new Date(endYear, endMonth - 1, endDay);
+
+  // Добавляем 1 день к конечной дате, чтобы включить её в диапазон
+  endDate.setDate(endDate.getDate() + 1);
 
   console.log(`Фильтрация данных: с ${startDate.toISOString()} до ${endDate.toISOString()}`);
   return data.filter(item => {
@@ -94,7 +122,7 @@ const getDataForPeriod = (data, period, key) => {
 };
 
 // Генерация отчета
-const generateReport = (type, period, filter) => {
+const generateReport = (type, startDate, endDate, filter) => {
   tableHead.innerHTML = '';
   tableBody.innerHTML = '';
 
@@ -105,7 +133,7 @@ const generateReport = (type, period, filter) => {
     if (!appointments.length) {
       console.warn('Нет данных в localStorage для reportRecordsSync');
     }
-    data = getDataForPeriod(appointments, period, 'Date');
+    data = getDataForPeriod(appointments, startDate, endDate, 'Date');
     console.log('2. Отфильтрованные данные (посещаемость):', data);
     if (filter) {
       data = data.filter(item => item.vet === filter);
@@ -140,7 +168,7 @@ const generateReport = (type, period, filter) => {
       ...service,
       date: appointmentDates[service.ID_Appointment] || 'Неизвестно'
     }));
-    data = getDataForPeriod(data, period, 'date');
+    data = getDataForPeriod(data, startDate, endDate, 'date');
     console.log('3. Отфильтрованные данные (выручка):', data);
     if (filter) {
       data = data.filter(item => item.ID_Service.toString() === filter);
@@ -164,9 +192,27 @@ const generateReport = (type, period, filter) => {
 window.exportToExcel = () => {
   try {
     const type = reportTypeSelect.value;
-    const period = periodSelect.value;
+    const startDate = startDateInput.value;
+    const endDate = endDateInput.value;
     const filter = filterSelect.value;
-    generateReport(type, period, filter);
+
+    const dateRegex = /^\d{2}\.\d{2}\.\d{4}$/;
+    if (!dateRegex.test(startDate) || !dateRegex.test(endDate)) {
+      alert('Пожалуйста, введите даты в формате ДД.ММ.ГГГГ!');
+      return;
+    }
+
+    const [startDay, startMonth, startYear] = startDate.split('.').map(Number);
+    const [endDay, endMonth, endYear] = endDate.split('.').map(Number);
+    const startDateObj = new Date(startYear, startMonth - 1, startDay);
+    const endDateObj = new Date(endYear, endMonth - 1, endDay);
+
+    if (startDateObj > endDateObj) {
+      alert('Дата "С" должна быть меньше или равна дате "По"!');
+      return;
+    }
+
+    generateReport(type, startDate, endDate, filter);
 
     const worksheetData = Array.from(tableBody.children).map(row => {
       const cells = row.children;
@@ -185,7 +231,7 @@ window.exportToExcel = () => {
     const ws = XLSX.utils.json_to_sheet(worksheetData);
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, type === 'visits' ? 'Посещаемость' : 'Выручка');
-    XLSX.writeFile(wb, `report_${type}_${period}_${new Date().toISOString().split('T')[0]}.xlsx`);
+    XLSX.writeFile(wb, `report_${type}_${startDate}_${endDate}.xlsx`);
   } catch (error) {
     logError(`Ошибка экспорта в Excel: ${error.message}`);
     alert('Ошибка при экспорте в Excel. Проверьте консоль.');
@@ -196,9 +242,27 @@ window.exportToExcel = () => {
 window.exportToPDF = () => {
   try {
     const type = reportTypeSelect.value;
-    const period = periodSelect.value;
+    const startDate = startDateInput.value;
+    const endDate = endDateInput.value;
     const filter = filterSelect.value;
-    generateReport(type, period, filter);
+
+    const dateRegex = /^\d{2}\.\d{2}\.\d{4}$/;
+    if (!dateRegex.test(startDate) || !dateRegex.test(endDate)) {
+      alert('Пожалуйста, введите даты в формате ДД.ММ.ГГГГ!');
+      return;
+    }
+
+    const [startDay, startMonth, startYear] = startDate.split('.').map(Number);
+    const [endDay, endMonth, endYear] = endDate.split('.').map(Number);
+    const startDateObj = new Date(startYear, startMonth - 1, startDay);
+    const endDateObj = new Date(endYear, endMonth - 1, endDay);
+
+    if (startDateObj > endDateObj) {
+      alert('Дата "С" должна быть меньше или равна дате "По"!');
+      return;
+    }
+
+    generateReport(type, startDate, endDate, filter);
 
     const rows = Array.from(tableBody.children);
     if (rows.length === 0 || rows[0].textContent === 'Нет данных для отчета') {
@@ -210,7 +274,7 @@ window.exportToPDF = () => {
     const printContent = `
       <div style="font-family: Arial, sans-serif; padding: 20px;">
         <h1>Отчет: ${type === 'visits' ? 'Посещаемость' : 'Выручка'}</h1>
-        <p>Период: ${period === 'day' ? 'День' : period === 'week' ? 'Неделя' : 'Месяц'}</p>
+        <p>Период: с ${startDate} по ${endDate}</p>
         ${filter ? `<p>Фильтр: ${type === 'visits' ? (filter === '1' ? 'Иванов И.И.' : 'Петров П.П.') : filterSelect.options[filterSelect.selectedIndex].text}</p>` : ''}
         <table style="width:100%; border-collapse: collapse;">
           <tr style="background-color: #3498db; color: white;">
@@ -243,15 +307,32 @@ window.exportToPDF = () => {
 reportForm.addEventListener('submit', (e) => {
   e.preventDefault();
   const type = reportTypeSelect.value;
-  const period = periodSelect.value;
+  const startDate = startDateInput.value;
+  const endDate = endDateInput.value;
   const filter = filterSelect.value;
 
-  if (!type || !period) {
-    alert('Выберите тип отчета и период!');
+  if (!type) {
+    alert('Выберите тип отчета!');
     return;
   }
 
-  generateReport(type, period, filter);
+  const dateRegex = /^\d{2}\.\d{2}\.\d{4}$/;
+  if (!dateRegex.test(startDate) || !dateRegex.test(endDate)) {
+    alert('Пожалуйста, введите даты в формате ДД.ММ.ГГГГ!');
+    return;
+  }
+
+  const [startDay, startMonth, startYear] = startDate.split('.').map(Number);
+  const [endDay, endMonth, endYear] = endDate.split('.').map(Number);
+  const startDateObj = new Date(startYear, startMonth - 1, startDay);
+  const endDateObj = new Date(endYear, endMonth - 1, endDay);
+
+  if (startDateObj > endDateObj) {
+    alert('Дата "С" должна быть меньше или равна дате "По"!');
+    return;
+  }
+
+  generateReport(type, startDate, endDate, filter);
 });
 
 // Обработчик смены типа отчета
@@ -259,4 +340,4 @@ reportTypeSelect.addEventListener('change', updateFilters);
 
 // Инициализация
 updateFilters();
-generateReport('visits', 'month', '1'); // Инициализация для Иванова
+generateReport('visits', '01.05.2025', '14.05.2025', '1'); // Инициализация для Иванова

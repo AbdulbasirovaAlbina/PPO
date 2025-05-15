@@ -5,6 +5,7 @@ const timeSelect = document.getElementById('time');
 const petNameInput = document.getElementById('petName');
 const calendarBody = document.getElementById('calendarBody');
 const appointmentTableBody = document.getElementById('appointmentTableBody');
+const availableSlotsTitle = document.getElementById('availableSlotsTitle');
 
 let appointments = JSON.parse(localStorage.getItem('appointments') || '[]');
 let editingIndex = null;
@@ -25,6 +26,13 @@ const generateDates = () => {
     dates.push(date.toISOString().split('T')[0]);
   }
   return dates;
+};
+
+// Форматирование даты для читаемого вида (например, "15 мая 2025")
+const formatDateForDisplay = (dateStr) => {
+  const date = new Date(dateStr);
+  const options = { day: 'numeric', month: 'long', year: 'numeric' };
+  return date.toLocaleDateString('ru-RU', options);
 };
 
 // Обновление списка дат
@@ -65,6 +73,13 @@ const updateTimeOptions = () => {
 const updateCalendar = () => {
   const selectedDate = dateSelect.value;
   calendarBody.innerHTML = '';
+
+  // Обновляем заголовок с датой
+  if (selectedDate) {
+    availableSlotsTitle.textContent = `Доступные слоты на ${formatDateForDisplay(selectedDate)}`;
+  } else {
+    availableSlotsTitle.textContent = 'Доступные слоты';
+  }
 
   timeSlots.forEach(slot => {
     const row = document.createElement('tr');

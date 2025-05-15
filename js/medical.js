@@ -18,10 +18,13 @@ const visitDateInput = document.getElementById('visitDate');
 const temperatureInput = document.getElementById('temperature');
 const diagnosisInput = document.getElementById('diagnosis');
 const treatmentInput = document.getElementById('treatment');
+const addButton = document.getElementById('addButton');
+const saveButton = document.getElementById('saveButton');
 
 let selectedOwner = '';
 let selectedPetName = '';
 let allRecords = JSON.parse(localStorage.getItem('medicalRecords') || '[]');
+let editingIndex = null; // Для отслеживания редактируемой записи
 
 // Форматирование телефона в +7 (XXX) XXX-XX-XX
 const formatPhoneNumber = (value) => {
@@ -198,6 +201,7 @@ const loadRecords = (filteredRecords = null) => {
           <strong>Назначение лечения:</strong> ${record.treatment}<br>
           <div class="button-group">
             <button class="delete-btn" onclick="deleteRecord(${globalIndex})">Удалить</button>
+            <button class="edit-btn" onclick="editRecord(${globalIndex})">Редактировать</button>
           </div>
         </li>
       `;
@@ -308,13 +312,13 @@ window.fillPetDetails = () => {
   const petRecord = uniquePets[selectedIndex];
 
   if (petRecord) {
-    petNameInput.value = petRecord.petName;
+    petNameInput.value = petRecord.petName || '';
     petOwnerInput.value = petRecord.petOwner || '';
     ownerAddressInput.value = petRecord.ownerAddress || '';
     ownerPhoneInput.value = petRecord.ownerPhone || '';
     petSpeciesInput.value = petRecord.petSpecies || '';
     petBirthDateInput.value = petRecord.petBirthDate || '';
-    petGenderInput.value = petRecord.petGender || '';
+    petGenderInput.value = petRecord.petGender || ''; // Убедимся, что пол заполняется
     petColorInput.value = petRecord.petColor || '';
   } else {
     petNameInput.value = '';
@@ -329,14 +333,38 @@ window.fillPetDetails = () => {
 };
 
 window.deleteRecord = (index) => {
-  allRecords.splice(index, 1);
-  localStorage.setItem('medicalRecords', JSON.stringify(allRecords));
-  loadPets();
-  loadRecords();
-  if (allRecords.length === 0) {
-    recordsContainer.innerHTML = '';
-    recordsContainer.style.display = 'none';
+  if (confirm('Вы уверены, что хотите удалить запись?')) {
+    allRecords.splice(index, 1);
+    localStorage.setItem('medicalRecords', JSON.stringify(allRecords));
+    loadPets();
+    loadRecords();
+    if (allRecords.length === 0) {
+      recordsContainer.innerHTML = '';
+      recordsContainer.style.display = 'none';
+    }
   }
+};
+
+window.editRecord = (index) => {
+  editingIndex = index;
+  const record = allRecords[index];
+
+  petNameInput.value = record.petName || '';
+  petOwnerInput.value = record.petOwner || '';
+  ownerAddressInput.value = record.ownerAddress || '';
+  ownerPhoneInput.value = record.ownerPhone || '';
+  petSpeciesInput.value = record.petSpecies || '';
+  petBirthDateInput.value = record.petBirthDate || '';
+  petGenderInput.value = record.petGender || ''; // Заполняем пол
+  petColorInput.value = record.petColor || '';
+  visitDateInput.value = record.visitDate || '';
+  temperatureInput.value = record.temperature || '';
+  diagnosisInput.value = record.diagnosis || '';
+  treatmentInput.value = record.treatment || '';
+
+  // Переключаем форму в режим редактирования
+  addButton.style.display = 'none';
+  saveButton.style.display = 'inline-block';
 };
 
 form.addEventListener('submit', (e) => {
@@ -400,12 +428,21 @@ form.addEventListener('submit', (e) => {
     treatment
   };
 
-  allRecords.push(newRecord);
+  if (editingIndex !== null) {
+    // Режим редактирования
+    allRecords[editingIndex] = newRecord;
+    alert(`Запись обновлена: ${petName}, Диагноз: ${diagnosis}, Лечение: ${treatment}`);
+    editingIndex = null;
+    addButton.style.display = 'inline-block';
+    saveButton.style.display = 'none';
+  } else {
+    // Режим добавления
+    allRecords.push(newRecord);
+    alert(`Добавлена запись: ${petName}, Диагноз: ${diagnosis}, Лечение: ${treatment}`);
+  }
+
   localStorage.setItem('medicalRecords', JSON.stringify(allRecords));
-
-  alert(`Добавлена запись: ${petName}, Диагноз: ${diagnosis}, Лечение: ${treatment}`);
   form.reset();
-
   selectedOwner = '';
   selectedPetName = '';
   searchOwnerInput.value = '';

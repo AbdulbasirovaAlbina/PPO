@@ -16,12 +16,10 @@
         <option value="visits">Посещаемость</option>
         <option value="revenue">Выручка</option>
       </select>
-      <select id="period" required>
-        <option value="">Выберите период</option>
-        <option value="day">День</option>
-        <option value="week">Неделя</option>
-        <option value="month">Месяц</option>
-      </select>
+      <div class="date-range">
+        <input type="text" id="startDate" placeholder="С (ДД.ММ.ГГГГ)" pattern="\d{2}\.\d{2}\.\d{4}" title="Формат: ДД.ММ.ГГГГ" required>
+        <input type="text" id="endDate" placeholder="По (ДД.ММ.ГГГГ)" pattern="\d{2}\.\d{2}\.\d{4}" title="Формат: ДД.ММ.ГГГГ" required>
+      </div>
       <select id="filter" required>
         <option value="">Выберите фильтр</option>
       </select>

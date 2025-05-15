@@ -9,7 +9,8 @@
   margin-right: auto;
 }
 
-#reportForm select {
+#reportForm select,
+#reportForm input[type="text"] {
   width: 100%;
   padding: 8px;
   border: 1px solid #ddd;
@@ -17,6 +18,16 @@
   box-sizing: border-box;
   margin-bottom: 10px;
   font-size: 16px;
+}
+
+.date-range {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.date-range input {
+  flex: 1;
 }
 
 #reportTable {
@@ -30,7 +41,8 @@
   visibility: visible;
 }
 
-#reportTable th, #reportTable td {
+#reportTable th,
+#reportTable td {
   border: 1px solid #ddd;
   padding: 10px;
   text-align: center;
@@ -78,13 +90,19 @@ h1 {
     font-size: 14px;
   }
 
-  #reportTable th, #reportTable td {
+  #reportTable th,
+  #reportTable td {
     padding: 6px;
   }
 
   .button-group button {
     padding: 8px 15px;
     font-size: 14px;
+  }
+
+  .date-range {
+    flex-direction: column;
+    gap: 5px;
   }
 }
 
@@ -94,7 +112,8 @@ h1 {
     overflow-x: auto;
   }
 
-  #reportForm select {
+  #reportForm select,
+  #reportForm input[type="text"] {
     font-size: 14px;
   }
 

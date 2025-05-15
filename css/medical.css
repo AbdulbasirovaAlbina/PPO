@@ -147,6 +147,20 @@ form button:hover {
   background-color: #2980b9;
 }
 
+.edit-btn {
+  background-color: #2ecc71; /* Зеленый цвет для отличия */
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.edit-btn:hover {
+  background-color: #27ae60;
+}
+
 .patient-separator {
   border-top: 2px solid #000;
   margin: 20px 0;
