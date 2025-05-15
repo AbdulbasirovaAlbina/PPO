@@ -548,3 +548,4 @@ window.exportToPDF = () => {
 };
 
 loadPets();
+loadRecords();
