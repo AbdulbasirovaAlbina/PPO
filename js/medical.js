@@ -14,10 +14,84 @@ const searchOwnerInput = document.getElementById('searchOwner');
 const searchPetNameInput = document.getElementById('searchPetName');
 const ownerSuggestions = document.getElementById('ownerSuggestions');
 const petNameSuggestions = document.getElementById('petNameSuggestions');
+const visitDateInput = document.getElementById('visitDate');
+const temperatureInput = document.getElementById('temperature');
+const diagnosisInput = document.getElementById('diagnosis');
+const treatmentInput = document.getElementById('treatment');
 
 let selectedOwner = '';
 let selectedPetName = '';
 let allRecords = JSON.parse(localStorage.getItem('medicalRecords') || '[]');
+
+// Форматирование телефона в +7 (XXX) XXX-XX-XX
+const formatPhoneNumber = (value) => {
+  const digits = value.replace(/\D/g, ''); // Удаляем все не-цифры
+  let formatted = '';
+
+  if (digits.length > 0) {
+    formatted = '+7';
+  }
+  if (digits.length > 1) {
+    formatted += ' (' + digits.slice(1, 4);
+  }
+  if (digits.length >= 4) {
+    formatted += ') ' + digits.slice(4, 7);
+  }
+  if (digits.length >= 7) {
+    formatted += '-' + digits.slice(7, 9);
+  }
+  if (digits.length >= 9) {
+    formatted += '-' + digits.slice(9, 11);
+  }
+
+  return formatted;
+};
+
+// Форматирование даты в ДД.ММ.ГГГГ
+const formatDate = (value) => {
+  const digits = value.replace(/\D/g, ''); // Удаляем все не-цифры
+  let formatted = '';
+
+  if (digits.length > 0) {
+    formatted = digits.slice(0, 2);
+  }
+  if (digits.length >= 3) {
+    formatted += '.' + digits.slice(2, 4);
+  }
+  if (digits.length >= 5) {
+    formatted += '.' + digits.slice(4, 8);
+  }
+
+  return formatted;
+};
+
+// Обработчик ввода для телефона
+ownerPhoneInput.addEventListener('input', (e) => {
+  const cursorPosition = e.target.selectionStart;
+  const oldValue = e.target.value;
+  const formatted = formatPhoneNumber(e.target.value);
+  e.target.value = formatted;
+
+  // Корректировка позиции курсора
+  const diff = formatted.length - oldValue.length;
+  const newCursorPosition = cursorPosition + diff;
+  e.target.setSelectionRange(newCursorPosition, newCursorPosition);
+});
+
+// Обработчики ввода для дат
+[petBirthDateInput, visitDateInput].forEach(input => {
+  input.addEventListener('input', (e) => {
+    const cursorPosition = e.target.selectionStart;
+    const oldValue = e.target.value;
+    const formatted = formatDate(e.target.value);
+    e.target.value = formatted;
+
+    // Корректировка позиции курсора
+    const diff = formatted.length - oldValue.length;
+    const newCursorPosition = cursorPosition + diff;
+    e.target.setSelectionRange(newCursorPosition, newCursorPosition);
+  });
+});
 
 const loadPets = (filteredRecords = null) => {
   const records = filteredRecords || allRecords;
@@ -248,13 +322,13 @@ form.addEventListener('submit', (e) => {
   const petName = petNameInput.value.trim();
   const petGender = petGenderInput.value.trim();
   const petColor = petColorInput.value.trim();
-  const visitDate = document.getElementById('visitDate').value.trim();
-  const temperature = document.getElementById('temperature').value.trim();
-  const diagnosis = document.getElementById('diagnosis').value.trim();
-  const treatment = document.getElementById('treatment').value.trim();
+  const visitDate = visitDateInput.value.trim();
+  const temperature = temperatureInput.value.trim();
+  const diagnosis = diagnosisInput.value.trim();
+  const treatment = treatmentInput.value.trim();
 
   const nameRegex = /^[А-Яа-яЁё\s\-]+$/;
-  const phoneRegex = /^\+?\d*$/;
+  const phoneRegex = /^\+7\s\(\d{3}\)\s\d{3}-\d{2}-\d{2}$|^\+?\d{1,11}$/;
   const dateRegex = /^\d{2}\.\d{2}\.\d{4}$/;
   const tempRegex = /^\d{2}([.,]\d)?$/;
 
@@ -267,7 +341,7 @@ form.addEventListener('submit', (e) => {
     return;
   }
   if (ownerPhone && !phoneRegex.test(ownerPhone)) {
-    alert('Телефон должен содержать только цифры и может начинаться с +.');
+    alert('Телефон должен быть в формате +7 (XXX) XXX-XX-XX или содержать до 11 цифр.');
     return;
   }
   if (petBirthDate && !dateRegex.test(petBirthDate)) {
@@ -414,3 +488,4 @@ window.exportToPDF = () => {
 };
 
 loadPets();
+loadRecords();

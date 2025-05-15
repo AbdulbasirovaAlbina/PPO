@@ -147,7 +147,7 @@ const sendNotification = (appointment) => {
 const syncWithModules = (appointment, appointmentId) => {
   // A2: Передача в медкарты
   const medicalSync = {
-    ID_Pet: appointment.petName, // Упрощение, в реальной БД нужен ID
+    ID_Pet: appointment.petName, 
     ID_Appointment: appointmentId
   };
   let medicalRecords = JSON.parse(localStorage.getItem('medicalRecordsSync') || '[]');
