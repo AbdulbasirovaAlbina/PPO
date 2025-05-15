@@ -222,10 +222,9 @@ window.cancelAppointment = (index) => {
 // Изменение записи
 window.editAppointment = (index) => {
   const appointment = appointments[index];
-  vetSelect.value = appointment.vet;
-  dateSelect.value = appointment.date;
-  timeSelect.value = appointment.time;
-  petNameInput.value = appointment.petName;
+  vetSelect.value = appointment.vet; // Подставляем врача
+  petNameInput.value = appointment.petName; // Подставляем кличку питомца
+  // Дата и время не подставляются, чтобы пользователь выбрал их заново
   updateTimeOptions();
   editingIndex = index;
 };
