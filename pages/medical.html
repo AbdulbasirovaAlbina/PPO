@@ -12,25 +12,67 @@
 
   <form id="medicalForm">
     <div class="card-header">
-      <p>Выберите питомца</p>
-      <select id="petSelect" onchange="fillPetDetails()">
-        <option value="">-- Выберите питомца --</option>
-      </select>
-      <p>ФИО владельца <input type="text" id="petOwner" placeholder="Ф.И.О. владельца" pattern="[А-Яа-яЁё\s\-]+" title="Только буквы и пробелы" required></p>
-      <p>адрес <input type="text" id="ownerAddress" placeholder="Адрес владельца"></p>
-      <p>телефон <input type="tel" id="ownerPhone" placeholder="Телефон владельца" pattern="\+?\d*" title="Только цифры, может начинаться с +"></p>
-      <p>Животное вида <input type="text" id="petSpecies" placeholder="Вид животного">
-        дата рождения <input type="text" id="petBirthDate" placeholder="ДД.ММ.ГГГГ" pattern="\d{2}\.\d{2}\.\d{4}" title="Формат: ДД.ММ.ГГГГ"></p>
-      <p>кличка <input type="text" id="petName" placeholder="Кличка питомца" pattern="[А-Яа-яЁё\s\-]+" title="Только буквы и пробелы" required>
-        пол <input type="text" id="petGender" placeholder="Пол животного">
-        окрас <input type="text" id="petColor" placeholder="Окрас животного"></p>
+      <div class="form-row">
+        <label for="petSelect">Выберите питомца:</label>
+        <select id="petSelect" onchange="fillPetDetails()">
+          <option value="">-- Выберите питомца --</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <label for="petOwner">ФИО владельца:</label>
+        <input type="text" id="petOwner" placeholder="Ф.И.О. владельца" pattern="[А-Яа-яЁё\s\-]+" title="Только буквы и пробелы" required>
+      </div>
+      <div class="form-row">
+        <label for="ownerAddress">Адрес:</label>
+        <input type="text" id="ownerAddress" placeholder="Адрес владельца">
+      </div>
+      <div class="form-row">
+        <label for="ownerPhone">Телефон:</label>
+        <input type="tel" id="ownerPhone" placeholder="Телефон владельца">
+      </div>
+      <div class="form-row">
+        <label for="petSpecies">Животное вида:</label>
+        <input type="text" id="petSpecies" placeholder="Вид животного">
+      </div>
+      <div class="form-row">
+        <label for="petBirthDate">Дата рождения:</label>
+        <input type="text" id="petBirthDate" placeholder="ДД.ММ.ГГГГ" pattern="\d{2}\.\d{2}\.\d{4}" title="Формат: ДД.ММ.ГГГГ">
+      </div>
+      <div class="form-row">
+        <label for="petName">Кличка:</label>
+        <input type="text" id="petName" placeholder="Кличка питомца" pattern="[А-Яа-яЁё\s\-]+" title="Только буквы и пробелы" required>
+      </div>
+      <div class="form-row">
+        <label for="petGender">Пол:</label>
+        <select id="petGender">
+          <option value="">Выберите пол</option>
+          <option value="Самка">Ж (Самка)</option>
+          <option value="Самец">М (Самец)</option>
+          <option value="Неопределённый">Неопределённый</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <label for="petColor">Окрас:</label>
+        <input type="text" id="petColor" placeholder="Окрас животного">
+      </div>
     </div>
     <div class="card-section">
-      <p>Дата <input type="text" id="visitDate" placeholder="ДД.ММ.ГГГГ" pattern="\d{2}\.\d{2}\.\d{4}" title="Формат: ДД.ММ.ГГГГ">
-        Температура T- <input type="text" id="temperature" placeholder="например, 36.9°C" pattern="\d{2}([.,]\d)?" title="Например: 36.9"></p>
-      <textarea id="diagnosis" placeholder="Диагноз" required></textarea>
-      <p>Назначение лечения</p>
-      <textarea id="treatment" placeholder="Назначение лечения" required style="height: 82px;"></textarea>
+      <div class="form-row">
+        <label for="visitDate">Дата:</label>
+        <input type="text" id="visitDate" placeholder="ДД.ММ.ГГГГ" pattern="\d{2}\.\d{2}\.\d{4}" title="Формат: ДД.ММ.ГГГГ">
+      </div>
+      <div class="form-row">
+        <label for="temperature">Температура T-:</label>
+        <input type="text" id="temperature" placeholder="например, 36.9°C" pattern="\d{2}([.,]\d)?" title="Например: 36.9">
+      </div>
+      <div class="form-row">
+        <label for="diagnosis">Диагноз:</label>
+        <textarea id="diagnosis" placeholder="Диагноз" required></textarea>
+      </div>
+      <div class="form-row">
+        <label for="treatment">Назначение лечения:</label>
+        <textarea id="treatment" placeholder="Назначение лечения" required></textarea>
+      </div>
     </div>
     <div class="button-group">
       <button type="submit">Добавить запись</button>
@@ -58,7 +100,7 @@
           <p><strong>Животное вида:</strong> Кот</p>
           <p><strong>Дата рождения:</strong> 15.06.2020</p>
           <p><strong>Кличка:</strong> Барсик</p>
-          <p><strong>Пол:</strong> Мужской</p>
+          <p><strong>Пол:</strong> Самец</p>
           <p><strong>Окрас:</strong> Серый</p>
         </div>
         <div class="visit-history">

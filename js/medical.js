@@ -65,6 +65,21 @@ const formatDate = (value) => {
   return formatted;
 };
 
+// Форматирование температуры в XX.X
+const formatTemperature = (value) => {
+  const digits = value.replace(/\D/g, ''); // Удаляем все не-цифры
+  let formatted = '';
+
+  if (digits.length > 0) {
+    formatted = digits.slice(0, 2);
+  }
+  if (digits.length >= 3) {
+    formatted += '.' + digits.slice(2, 3);
+  }
+
+  return formatted;
+};
+
 // Обработчик ввода для телефона
 ownerPhoneInput.addEventListener('input', (e) => {
   const cursorPosition = e.target.selectionStart;
@@ -91,6 +106,19 @@ ownerPhoneInput.addEventListener('input', (e) => {
     const newCursorPosition = cursorPosition + diff;
     e.target.setSelectionRange(newCursorPosition, newCursorPosition);
   });
+});
+
+// Обработчик ввода для температуры
+temperatureInput.addEventListener('input', (e) => {
+  const cursorPosition = e.target.selectionStart;
+  const oldValue = e.target.value;
+  const formatted = formatTemperature(e.target.value);
+  e.target.value = formatted;
+
+  // Корректировка позиции курсора
+  const diff = formatted.length - oldValue.length;
+  const newCursorPosition = cursorPosition + diff;
+  e.target.setSelectionRange(newCursorPosition, newCursorPosition);
 });
 
 const loadPets = (filteredRecords = null) => {
@@ -320,7 +348,7 @@ form.addEventListener('submit', (e) => {
   const petSpecies = petSpeciesInput.value.trim();
   const petBirthDate = petBirthDateInput.value.trim();
   const petName = petNameInput.value.trim();
-  const petGender = petGenderInput.value.trim();
+  const petGender = petGenderInput.value;
   const petColor = petColorInput.value.trim();
   const visitDate = visitDateInput.value.trim();
   const temperature = temperatureInput.value.trim();
@@ -328,7 +356,6 @@ form.addEventListener('submit', (e) => {
   const treatment = treatmentInput.value.trim();
 
   const nameRegex = /^[А-Яа-яЁё\s\-]+$/;
-  const phoneRegex = /^\+7\s\(\d{3}\)\s\d{3}-\d{2}-\d{2}$|^\+?\d{1,11}$/;
   const dateRegex = /^\d{2}\.\d{2}\.\d{4}$/;
   const tempRegex = /^\d{2}([.,]\d)?$/;
 
@@ -338,10 +365,6 @@ form.addEventListener('submit', (e) => {
   }
   if (!nameRegex.test(petName)) {
     alert('Поле "Кличка питомца" должно содержать только буквы и пробелы.');
-    return;
-  }
-  if (ownerPhone && !phoneRegex.test(ownerPhone)) {
-    alert('Телефон должен быть в формате +7 (XXX) XXX-XX-XX или содержать до 11 цифр.');
     return;
   }
   if (petBirthDate && !dateRegex.test(petBirthDate)) {

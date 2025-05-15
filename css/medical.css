@@ -18,25 +18,41 @@ form {
   margin-bottom: 20px;
 }
 
-form p {
+.form-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
   margin-bottom: 10px;
 }
 
-form input[type="text"],
-form input[type="tel"],
-form textarea,
-form select {
-  width: 100%;
+.form-row label {
+  width: 150px;
+  text-align: right;
+  font-weight: bold;
+}
+
+.form-row input[type="text"],
+.form-row input[type="tel"],
+.form-row select,
+.form-row textarea {
+  flex: 1;
+  min-width: 150px;
+  max-width: 300px;
   padding: 8px;
   border: 1px solid #ddd;
   border-radius: 4px;
   box-sizing: border-box;
-  margin-bottom: 10px;
 }
 
-form textarea {
+.form-row textarea {
   resize: vertical;
   height: 80px;
+  vertical-align: middle;
+}
+
+.form-row select {
+  max-width: 200px; /* Ограничиваем ширину для выпадающих списков */
 }
 
 form button {
@@ -218,6 +234,24 @@ form button:hover {
 }
 
 @media (max-width: 768px) {
+  .form-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .form-row label {
+    width: auto;
+    text-align: left;
+    margin-bottom: 5px;
+  }
+
+  .form-row input[type="text"],
+  .form-row input[type="tel"],
+  .form-row select,
+  .form-row textarea {
+    max-width: 100%;
+  }
+
   .record-details {
     flex-direction: column;
   }
