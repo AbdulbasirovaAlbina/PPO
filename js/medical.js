@@ -312,7 +312,7 @@ window.fillPetDetails = () => {
     }
   });
 
-  const petRecord = uniquePets[selectedIndex];
+  const petRecord = uniquePets[selectedIndex] || allRecords[selectedIndex]; // Поправка для совместимости
 
   if (petRecord) {
     petNameInput.value = petRecord.petName || '';
@@ -321,17 +321,18 @@ window.fillPetDetails = () => {
     ownerPhoneInput.value = petRecord.ownerPhone || '';
     petSpeciesInput.value = petRecord.petSpecies || '';
     petBirthDateInput.value = petRecord.petBirthDate || '';
-    petGenderInput.value = petRecord.petGender || ''; // Убедимся, что пол заполняется
+    petGenderInput.value = petRecord.petGender || '';
     petColorInput.value = petRecord.petColor || '';
+    visitDateInput.value = petRecord.visitDate || '';
+    temperatureInput.value = petRecord.temperature || '';
+    diagnosisInput.value = petRecord.diagnosis || '';
+    treatmentInput.value = petRecord.treatment || '';
   } else {
-    petNameInput.value = '';
-    petOwnerInput.value = '';
-    ownerAddressInput.value = '';
-    ownerPhoneInput.value = '';
-    petSpeciesInput.value = '';
-    petBirthDateInput.value = '';
-    petColorInput.value = '';
-    petGenderInput.value = '';
+    form.reset(); // Очищаем форму, если запись не выбрана
+    visitDateInput.value = '';
+    temperatureInput.value = '';
+    diagnosisInput.value = '';
+    treatmentInput.value = '';
   }
 };
 
@@ -345,6 +346,7 @@ window.deleteRecord = (index) => {
       recordsContainer.innerHTML = '';
       recordsContainer.style.display = 'none';
     }
+    fillPetDetails(); // Обновляем форму после удаления
   }
 };
 
@@ -358,7 +360,7 @@ window.editRecord = (index) => {
   ownerPhoneInput.value = record.ownerPhone || '';
   petSpeciesInput.value = record.petSpecies || '';
   petBirthDateInput.value = record.petBirthDate || '';
-  petGenderInput.value = record.petGender || ''; // Заполняем пол
+  petGenderInput.value = record.petGender || '';
   petColorInput.value = record.petColor || '';
   visitDateInput.value = record.visitDate || '';
   temperatureInput.value = record.temperature || '';
@@ -452,6 +454,7 @@ form.addEventListener('submit', (e) => {
   searchPetNameInput.value = '';
   loadPets();
   loadRecords();
+  fillPetDetails(); // Очищаем форму после добавления
 });
 
 window.printPetRecords = (identifier) => {
@@ -518,10 +521,37 @@ window.printPetRecords = (identifier) => {
   `;
 
   printContent.innerHTML = htmlContent;
-  const originalContent = document.body.innerHTML;
-  document.body.innerHTML = printContent.innerHTML;
-  window.print();
-  document.body.innerHTML = originalContent;
+
+  // Создаем iframe для печати
+  const printFrame = document.createElement('iframe');
+  printFrame.style.display = 'none';
+  document.body.appendChild(printFrame);
+  const frameDoc = printFrame.contentWindow.document;
+  frameDoc.open();
+  frameDoc.write(`
+    <html>
+      <head>
+        <title>Печать</title>
+        <style>
+          body { margin: 0; padding: 20px; font-family: Arial, sans-serif; }
+          table { border-collapse: collapse; width: 100%; }
+          th, td { border: 1px solid #000; padding: 8px; }
+          th { background-color: #f2f2f2; }
+          h2, h3, p { text-align: center; }
+        </style>
+      </head>
+      <body>${htmlContent}</body>
+    </html>
+  `);
+  frameDoc.close();
+  printFrame.contentWindow.focus();
+  printFrame.contentWindow.print();
+
+  // Удаляем iframe после печати и восстанавливаем состояние
+  printFrame.parentNode.removeChild(printFrame);
+  loadPets();
+  loadRecords();
+  fillPetDetails();
 };
 
 window.exportToPDF = () => {
@@ -597,10 +627,37 @@ window.exportToPDF = () => {
   `;
 
   printContent.innerHTML = htmlContent;
-  const originalContent = document.body.innerHTML;
-  document.body.innerHTML = printContent.innerHTML;
-  window.print();
-  document.body.innerHTML = originalContent;
+
+  // Создаем iframe для печати
+  const printFrame = document.createElement('iframe');
+  printFrame.style.display = 'none';
+  document.body.appendChild(printFrame);
+  const frameDoc = printFrame.contentWindow.document;
+  frameDoc.open();
+  frameDoc.write(`
+    <html>
+      <head>
+        <title>Печать</title>
+        <style>
+          body { margin: 0; padding: 20px; font-family: Arial, sans-serif; }
+          table { border-collapse: collapse; width: 100%; }
+          th, td { border: 1px solid #000; padding: 8px; }
+          th { background-color: #f2f2f2; }
+          h2, h3, p { text-align: center; }
+        </style>
+      </head>
+      <body>${htmlContent}</body>
+    </html>
+  `);
+  frameDoc.close();
+  printFrame.contentWindow.focus();
+  printFrame.contentWindow.print();
+
+  // Удаляем iframe после печати и восстанавливаем состояние
+  printFrame.parentNode.removeChild(printFrame);
+  loadPets();
+  loadRecords();
+  fillPetDetails();
 };
 
 loadPets();
