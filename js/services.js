@@ -2,7 +2,7 @@ const serviceForm = document.getElementById('serviceForm');
 const serviceTable = document.getElementById('serviceTable');
 const totalElement = document.getElementById('total');
 let services = JSON.parse(localStorage.getItem('services') || '[]');
-let total = services.reduce((sum, service) => sum + service.total, 0);
+let total = services.reduce((sum, service) => sum + (service.price * service.quantity), 0);
 
 const servicePrices = {
   'Вакцинация': 1000,
@@ -34,10 +34,12 @@ const updateReceipt = () => {
   serviceTable.innerHTML = '<tr><th>Наименование</th><th>Кол-во</th><th>Цена</th><th>Итог</th></tr>';
   services.forEach(service => {
     const row = document.createElement('tr');
-    row.innerHTML = `<td>${service.name}</td><td>1</td><td>${service.price} руб</td><td>${service.total} руб</td>`;
+    const serviceTotal = service.price * service.quantity;
+    row.innerHTML = `<td>${service.name}</td><td>${service.quantity}</td><td>${service.price} руб</td><td>${serviceTotal} руб</td>`;
     serviceTable.appendChild(row);
   });
 
+  total = services.reduce((sum, service) => sum + (service.price * service.quantity), 0);
   totalElement.textContent = `Итого: ${total} руб`;
   localStorage.setItem('services', JSON.stringify(services));
 
@@ -51,7 +53,7 @@ serviceForm.addEventListener('submit', (e) => {
   e.preventDefault();
   const serviceName = serviceSelect.value;
   let servicePrice = servicePrices[serviceName];
-  let serviceTotal = servicePrice;
+  let nameToAdd = serviceName;
 
   if (serviceName === 'Анализы') {
     const analysisType = analysisTypeSelect.value;
@@ -60,15 +62,22 @@ serviceForm.addEventListener('submit', (e) => {
       return;
     }
     servicePrice = analysisPrices[analysisType];
-    serviceTotal = servicePrice;
-    services.push({ name: analysisType, price: servicePrice, total: serviceTotal });
-  } else {
-    services.push({ name: serviceName, price: servicePrice, total: serviceTotal });
+    nameToAdd = analysisType;
   }
 
-  total += serviceTotal;
+  // Проверяем, есть ли уже такая услуга в чеке
+  const existingService = services.find(service => service.name === nameToAdd);
+  if (existingService) {
+    // Если услуга уже есть, увеличиваем количество
+    existingService.quantity += 1;
+  } else {
+    // Если услуги нет, добавляем новую с количеством 1
+    services.push({ name: nameToAdd, price: servicePrice, quantity: 1 });
+  }
+
   updateReceipt();
   serviceForm.reset();
+  analysisSelection.style.display = 'none'; // Скрываем выбор анализа после добавления
 });
 
 window.clearReceipt = () => {
@@ -80,10 +89,34 @@ window.clearReceipt = () => {
 
 window.printReceipt = () => {
   const printContent = document.getElementById('print-content').innerHTML;
-  const originalContent = document.body.innerHTML;
-  document.body.innerHTML = printContent;
-  window.print();
-  document.body.innerHTML = originalContent;
+
+  // Создаем iframe для печати
+  const printFrame = document.createElement('iframe');
+  printFrame.style.display = 'none';
+  document.body.appendChild(printFrame);
+  const frameDoc = printFrame.contentWindow.document;
+  frameDoc.open();
+  frameDoc.write(`
+    <html>
+      <head>
+        <title>Печать чека</title>
+        <style>
+          body { margin: 0; padding: 20px; font-family: Arial, sans-serif; }
+          table { border-collapse: collapse; width: 100%; }
+          th, td { border: 1px solid #000; padding: 8px; }
+          th { background-color: #f2f2f2; }
+          h1, p { text-align: center; }
+        </style>
+      </head>
+      <body>${printContent}</body>
+    </html>
+  `);
+  frameDoc.close();
+  printFrame.contentWindow.focus();
+  printFrame.contentWindow.print();
+
+  // Удаляем iframe после печати
+  printFrame.parentNode.removeChild(printFrame);
 };
 
 updateReceipt();
