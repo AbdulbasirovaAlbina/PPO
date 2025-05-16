@@ -161,6 +161,20 @@ form button:hover {
   background-color: #27ae60;
 }
 
+.print-btn {
+  background-color: #f1c40f; /* Желтый цвет для кнопки "Распечатать" */
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.print-btn:hover {
+  background-color: #d4ac0d;
+}
+
 .patient-separator {
   border-top: 2px solid #000;
   margin: 20px 0;

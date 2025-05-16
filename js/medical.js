@@ -181,6 +181,9 @@ const loadRecords = (filteredRecords = null) => {
         <p><strong>Кличка:</strong> ${petName}</p>
         <p><strong>Пол:</strong> ${groupedRecords[identifier][0].petGender || 'Не указан'}</p>
         <p><strong>Окрас:</strong> ${groupedRecords[identifier][0].petColor || 'Не указан'}</p>
+        <div class="button-group">
+          <button class="print-btn" onclick="printPetRecords('${identifier}')">Распечатать</button>
+        </div>
       </div>
     `;
     let visitHistory = `
@@ -451,19 +454,79 @@ form.addEventListener('submit', (e) => {
   loadRecords();
 });
 
+window.printPetRecords = (identifier) => {
+  const printContent = document.getElementById('print-content');
+  printContent.innerHTML = ''; // Очищаем перед заполнением
+
+  const groupedRecords = {};
+  allRecords.forEach(record => {
+    const key = `${record.petName}|${record.petOwner || 'Не указано'}|${record.petBirthDate || 'Не указано'}`;
+    if (!groupedRecords[key]) {
+      groupedRecords[key] = [];
+    }
+    groupedRecords[key].push(record);
+  });
+
+  const [petName, petOwner, petBirthDate] = identifier.split('|');
+  const petData = groupedRecords[identifier][0];
+
+  let htmlContent = `
+    <h2 style="text-align: center; font-family: Arial, sans-serif;">АМБУЛАТОРНАЯ КАРТА</h2>
+    <p style="text-align: center; font-family: Arial, sans-serif;">Дата: ${new Date().toLocaleDateString('ru-RU')}</p>
+    <h3 style="font-family: Arial, sans-serif;">Информация о владельце и питомце</h3>
+    <table border="1" style="width: 100%; border-collapse: collapse; margin-bottom: 20px; font-family: Arial, sans-serif;">
+      <tr><td style="padding: 8px;"><strong>ФИО владельца:</strong></td><td style="padding: 8px;">${petOwner}</td></tr>
+      <tr><td style="padding: 8px;"><strong>Адрес:</strong></td><td style="padding: 8px;">${petData.ownerAddress || 'Не указан'}</td></tr>
+      <tr><td style="padding: 8px;"><strong>Телефон:</strong></td><td style="padding: 8px;">${petData.ownerPhone || 'Не указан'}</td></tr>
+      <tr><td style="padding: 8px;"><strong>Животное вида:</strong></td><td style="padding: 8px;">${petData.petSpecies || 'Не указан'}</td></tr>
+      <tr><td style="padding: 8px;"><strong>Дата рождения:</strong></td><td style="padding: 8px;">${petBirthDate}</td></tr>
+      <tr><td style="padding: 8px;"><strong>Кличка:</strong></td><td style="padding: 8px;">${petName}</td></tr>
+      <tr><td style="padding: 8px;"><strong>Пол:</strong></td><td style="padding: 8px;">${petData.petGender || 'Не указан'}</td></tr>
+      <tr><td style="padding: 8px;"><strong>Окрас:</strong></td><td style="padding: 8px;">${petData.petColor || 'Не указан'}</td></tr>
+    </table>
+  `;
+
+  htmlContent += `
+    <h3 style="font-family: Arial, sans-serif;">История посещений</h3>
+    <table border="1" style="width: 100%; border-collapse: collapse; font-family: Arial, sans-serif;">
+      <tr>
+        <th style="padding: 8px; background-color: #f2f2f2;">Дата</th>
+        <th style="padding: 8px; background-color: #f2f2f2;">Температура</th>
+        <th style="padding: 8px; background-color: #f2f2f2;">Диагноз</th>
+        <th style="padding: 8px; background-color: #f2f2f2;">Назначение лечения</th>
+      </tr>
+  `;
+
+  groupedRecords[identifier].forEach((record) => {
+    htmlContent += `
+      <tr>
+        <td style="padding: 8px;">${record.visitDate || 'Не указано'}</td>
+        <td style="padding: 8px;">${record.temperature || 'Не указано'}</td>
+        <td style="padding: 8px;">${record.diagnosis}</td>
+        <td style="padding: 8px;">${record.treatment}</td>
+      </tr>
+    `;
+  });
+
+  htmlContent += '</table>';
+
+  htmlContent += `
+    <div class="signature-block" style="margin-top: 20px; text-align: center; font-family: Arial, sans-serif;">
+      <p>Получено лицом, ответственным за совершение операции и правильность её оформления</p>
+      <p>М.П. _____________ (подпись) ${new Date().toLocaleDateString('ru-RU')}</p>
+    </div>
+  `;
+
+  printContent.innerHTML = htmlContent;
+  const originalContent = document.body.innerHTML;
+  document.body.innerHTML = printContent.innerHTML;
+  window.print();
+  document.body.innerHTML = originalContent;
+};
+
 window.exportToPDF = () => {
-  const doc = new jsPDF();
-  const margin = 15;
-  let y = 15;
-  const maxWidth = 180;
-
-  doc.setFont("helvetica", "normal");
-  doc.setFontSize(12);
-
-  doc.setFontSize(16);
-  doc.text("АМБУЛАТОРНАЯ КАРТА", 105, y, { align: "center" });
-  y += 10;
-  doc.setFontSize(12);
+  const printContent = document.getElementById('print-content');
+  printContent.innerHTML = ''; // Очищаем перед заполнением
 
   const groupedRecords = {};
   allRecords.forEach(record => {
@@ -475,76 +538,69 @@ window.exportToPDF = () => {
   });
 
   const identifiers = Object.keys(groupedRecords);
+  let htmlContent = `
+    <h2 style="text-align: center;">АМБУЛАТОРНАЯ КАРТА</h2>
+    <p style="text-align: center;">Дата: ${new Date().toLocaleDateString('ru-RU')}</p>
+  `;
+
   identifiers.forEach((identifier, idx) => {
     if (idx > 0) {
-      doc.addPage();
-      y = 15;
+      htmlContent += '<hr style="border: 1px solid #000; margin: 20px 0;">';
     }
 
     const [petName, petOwner, petBirthDate] = identifier.split('|');
     const petData = groupedRecords[identifier][0];
 
-    doc.setFont("helvetica", "bold");
-    doc.text("Информация о владельце и питомце", margin, y);
-    y += 7;
-    doc.setFont("helvetica", "normal");
+    htmlContent += `
+      <h3>Информация о владельце и питомце</h3>
+      <table border="1" style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+        <tr><td><strong>ФИО владельца:</strong></td><td>${petOwner}</td></tr>
+        <tr><td><strong>Адрес:</strong></td><td>${petData.ownerAddress || 'Не указан'}</td></tr>
+        <tr><td><strong>Телефон:</strong></td><td>${petData.ownerPhone || 'Не указан'}</td></tr>
+        <tr><td><strong>Животное вида:</strong></td><td>${petData.petSpecies || 'Не указан'}</td></tr>
+        <tr><td><strong>Дата рождения:</strong></td><td>${petBirthDate}</td></tr>
+        <tr><td><strong>Кличка:</strong></td><td>${petName}</td></tr>
+        <tr><td><strong>Пол:</strong></td><td>${petData.petGender || 'Не указан'}</td></tr>
+        <tr><td><strong>Окрас:</strong></td><td>${petData.petColor || 'Не указан'}</td></tr>
+      </table>
+    `;
 
-    const staticInfo = [
-      `ФИО владельца: ${petOwner}`,
-      `Адрес: ${petData.ownerAddress || 'Не указан'}`,
-      `Телефон: ${petData.ownerPhone || 'Не указан'}`,
-      `Животное вида: ${petData.petSpecies || 'Не указан'}`,
-      `Дата рождения: ${petBirthDate}`,
-      `Кличка: ${petName}`,
-      `Пол: ${petData.petGender || 'Не указан'}`,
-      `Окрас: ${petData.petColor || 'Не указан'}`
-    ];
+    htmlContent += `
+      <h3>История посещений</h3>
+      <table border="1" style="width: 100%; border-collapse: collapse;">
+        <tr><th>Дата</th><th>Температура</th><th>Диагноз</th><th>Назначение лечения</th></tr>
+    `;
 
-    staticInfo.forEach(line => {
-      if (y + 10 > 280) {
-        doc.addPage();
-        y = 15;
-      }
-      const splitText = doc.splitTextToSize(line, maxWidth);
-      doc.text(splitText, margin, y);
-      y += splitText.length * 7;
+    groupedRecords[identifier].forEach((record) => {
+      htmlContent += `
+        <tr>
+          <td>${record.visitDate || 'Не указано'}</td>
+          <td>${record.temperature || 'Не указано'}</td>
+          <td>${record.diagnosis}</td>
+          <td>${record.treatment}</td>
+        </tr>
+      `;
     });
 
-    y += 5;
-
-    doc.setFont("helvetica", "bold");
-    doc.text("История посещений", margin, y);
-    y += 7;
-    doc.setFont("helvetica", "normal");
-
-    groupedRecords[identifier].forEach((record, index) => {
-      const visitInfo = [
-        `Посещение ${index + 1}:`,
-        `  Дата: ${record.visitDate || 'Не указано'}`,
-        `  Температура: ${record.temperature || 'Не указано'}`,
-        `  Диагноз: ${record.diagnosis}`,
-        `  Назначение лечения: ${record.treatment}`
-      ];
-
-      visitInfo.forEach(line => {
-        if (y + 10 > 280) {
-          doc.addPage();
-          y = 15;
-        }
-        const splitText = doc.splitTextToSize(line, maxWidth);
-        doc.text(splitText, margin, y);
-        y += splitText.length * 7;
-      });
-
-      y += 5;
-    });
+    htmlContent += '</table>';
   });
 
   if (identifiers.length === 0) {
-    doc.text("Нет записей для экспорта.", margin, y);
+    htmlContent += '<p>Нет записей для экспорта.</p>';
   }
 
-  doc.save("Амбулаторная_карта.pdf");
+  htmlContent += `
+    <div class="signature-block" style="margin-top: 20px; text-align: center;">
+      <p>Получено лицом, ответственным за совершение операции и правильность её оформления</p>
+      <p>М.П. _____________ (подпись) ${new Date().toLocaleDateString('ru-RU')}</p>
+    </div>
+  `;
+
+  printContent.innerHTML = htmlContent;
+  const originalContent = document.body.innerHTML;
+  document.body.innerHTML = printContent.innerHTML;
+  window.print();
+  document.body.innerHTML = originalContent;
 };
 
 loadPets();
