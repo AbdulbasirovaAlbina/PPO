@@ -133,16 +133,15 @@ const loadPets = (filteredRecords = null) => {
     const identifier = `${record.petName}|${record.petOwner || 'Не указано'}|${record.petBirthDate || 'Не указано'}`;
     if (!seen.has(identifier)) {
       seen.add(identifier);
-      uniquePets.push(record);
+      uniquePets.push({ ...record, identifier }); // Сохраняем идентификатор в объекте
     }
   });
 
   petSelect.innerHTML = '<option value="">-- Выберите питомца --</option>';
-  uniquePets.forEach((record, index) => {
-    const identifier = `${index}`;
+  uniquePets.forEach((record) => {
     const displayText = `Кличка: ${record.petName}, Владелец: ${record.petOwner || 'Не указано'}, Дата рождения: ${record.petBirthDate || 'Не указано'}`;
     const option = document.createElement('option');
-    option.value = identifier;
+    option.value = record.identifier; // Используем identifier вместо индекса
     option.textContent = displayText;
     petSelect.appendChild(option);
   });
@@ -300,7 +299,7 @@ const filterRecords = () => {
 };
 
 window.fillPetDetails = () => {
-  const selectedIndex = petSelect.value;
+  const selectedIdentifier = petSelect.value;
   const uniquePets = [];
   const seen = new Set();
 
@@ -308,13 +307,14 @@ window.fillPetDetails = () => {
     const identifier = `${record.petName}|${record.petOwner || 'Не указано'}|${record.petBirthDate || 'Не указано'}`;
     if (!seen.has(identifier)) {
       seen.add(identifier);
-      uniquePets.push(record);
+      uniquePets.push({ ...record, identifier });
     }
   });
 
-  const petRecord = uniquePets[selectedIndex] || allRecords[selectedIndex]; // Поправка для совместимости
+  const petRecord = uniquePets.find(pet => pet.identifier === selectedIdentifier);
 
   if (petRecord) {
+    // Заполняем только поля, связанные с информацией о питомце и владельце
     petNameInput.value = petRecord.petName || '';
     petOwnerInput.value = petRecord.petOwner || '';
     ownerAddressInput.value = petRecord.ownerAddress || '';
@@ -323,12 +323,14 @@ window.fillPetDetails = () => {
     petBirthDateInput.value = petRecord.petBirthDate || '';
     petGenderInput.value = petRecord.petGender || '';
     petColorInput.value = petRecord.petColor || '';
-    visitDateInput.value = petRecord.visitDate || '';
-    temperatureInput.value = petRecord.temperature || '';
-    diagnosisInput.value = petRecord.diagnosis || '';
-    treatmentInput.value = petRecord.treatment || '';
+    // Оставляем поля для медицинских данных пустыми
+    visitDateInput.value = '';
+    temperatureInput.value = '';
+    diagnosisInput.value = '';
+    treatmentInput.value = '';
   } else {
-    form.reset(); // Очищаем форму, если запись не выбрана
+    // Очищаем форму, если питомец не выбран
+    form.reset();
     visitDateInput.value = '';
     temperatureInput.value = '';
     diagnosisInput.value = '';
@@ -341,7 +343,6 @@ window.deleteRecord = (index) => {
     allRecords.splice(index, 1);
     localStorage.setItem('medicalRecords', JSON.stringify(allRecords));
     loadPets();
-    loadRecords();
     if (allRecords.length === 0) {
       recordsContainer.innerHTML = '';
       recordsContainer.style.display = 'none';
@@ -453,7 +454,6 @@ form.addEventListener('submit', (e) => {
   searchOwnerInput.value = '';
   searchPetNameInput.value = '';
   loadPets();
-  loadRecords();
   fillPetDetails(); // Очищаем форму после добавления
 });
 
@@ -550,7 +550,6 @@ window.printPetRecords = (identifier) => {
   // Удаляем iframe после печати и восстанавливаем состояние
   printFrame.parentNode.removeChild(printFrame);
   loadPets();
-  loadRecords();
   fillPetDetails();
 };
 
@@ -656,9 +655,7 @@ window.exportToPDF = () => {
   // Удаляем iframe после печати и восстанавливаем состояние
   printFrame.parentNode.removeChild(printFrame);
   loadPets();
-  loadRecords();
   fillPetDetails();
 };
 
 loadPets();
-loadRecords();
